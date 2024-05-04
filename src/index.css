@@ -1,41 +1,63 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+  --primary-color: #424242;
+  --secondary-color: #616161;
+  --component-background: rgba(255, 255, 255, 0.05);
 }
+
 body {
-  margin: 0;
+  background: linear-gradient(135deg, #1c1c1c, #424242);
+  background-size: cover;
+  background-attachment: fixed;
+  font-family: "Poppins", sans-serif;
 }
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #333;
+.address-truncate {
+    max-width: 150px;
+    overflow-x: auto;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+.container {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(30px);
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+}
+
+button {
+  background: var(--primary-color);
   color: #fff;
-  padding: 10px 20px;
+  border: 0;
+  outline: 0;
+  border-radius: 30px;
+  cursor: pointer;
 }
 
-.navbar-text {
-  font-size: 20px;
+button:hover {
+  background: var(--secondary-color);
 }
 
-.center-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; /* Adjust this to control vertical centering */
+input[type="text"] {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 0;
+  outline: 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.center-image {
-  max-width: 100%;
-  max-height: 100%;
+.content {
+  color: white;
+}
+
+.content .idea,
+.content .update,
+.content .grid__app {
+  background: var(--component-background);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }

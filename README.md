@@ -1,2 +1,2 @@
-# boostifyts-ui
-# aptoschat
+# AptosChat
+# aptos.chat

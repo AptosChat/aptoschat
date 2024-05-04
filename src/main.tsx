@@ -8,8 +8,8 @@ import { PontemWallet } from "@pontem/wallet-adapter-plugin";
 import { MartianWallet } from "@martianwallet/aptos-wallet-adapter";
 import { RiseWallet } from "@rise-wallet/wallet-adapter";
 import { FewchaWallet } from "fewcha-plugin-wallet-adapter";
-import { MSafeWalletAdapter } from "msafe-plugin-wallet-adapter";
-import { NightlyWallet } from "@nightlylabs/aptos-wallet-adapter-plugin";
+// import { MSafeWalletAdapter } from "msafe-plugin-wallet-adapter";
+// import { NightlyWallet } from "@nightlylabs/aptos-wallet-adapter-plugin";
 import { OpenBlockWallet } from "@openblockhq/aptos-wallet-adapter";
 import { TokenPocketWallet } from "@tp-lab/aptos-wallet-adapter";
 import { TrustWallet } from "@trustwallet/aptos-wallet-adapter";
@@ -24,8 +24,8 @@ const wallets = [
   new MartianWallet(),
   new FewchaWallet(),
   new RiseWallet(),
-  new MSafeWalletAdapter(),
-  new NightlyWallet(),
+  // new MSafeWalletAdapter(),
+  // new NightlyWallet(),
   new OpenBlockWallet(),
   new TokenPocketWallet(),
   new TrustWallet(),

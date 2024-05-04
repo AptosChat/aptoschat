@@ -42,9 +42,12 @@ function APTChat() {
   const aptos = new Aptos(aptosConfig);
   const [localMessages, setLocalMessages] = useState<Message[]>([]);
   const [isAddFriendModalVisible, setIsAddFriendModalVisible] = useState(false);
-
+  // const [eventListener, setEventListener] = useState<any>(null);
   const [friendKey, setFriendKey] = useState("");
   // const [searchQuery, setSearchQuery] = useState("");
+  const [isAccessCodeModalVisible, setIsAccessCodeModalVisible] = useState(false);
+
+
 
   useEffect(() => {
     if (connected) {
@@ -77,6 +80,22 @@ function APTChat() {
     // Update local storage whenever local messages change
     localStorage.setItem("localMessages", JSON.stringify(localMessages));
   }, [localMessages]);
+
+  // useEffect(() => {
+  //   if (account) {
+  //     const listener = aptos.event.getAccountEventsByEventType(
+  //       `0x83af638081fc385750856d3db2bf47034243091869e6bce1ced66644e0ac97f4::aptchat10::NewMessageEvent`,
+  //       handleNewMessageEvent
+  //     );
+  //     setEventListener(listener);
+  //   }
+  
+  //   return () => {
+  //     if (eventListener) {
+  //       eventListener.unsubscribe();
+  //     }
+  //   };
+  // }, [account]);
 
   const checkUserResource = async () => {
     if (!account) return;
@@ -166,6 +185,7 @@ function APTChat() {
       message.success("Account created successfully");
       setIsCreateAccountModalVisible(false);
       fetchFriendList();
+      setIsAccessCodeModalVisible(true);
     } catch (error) {
       console.error(error);
       message.error("You are not Whitelisted Yet, Contact Admin");
@@ -175,16 +195,11 @@ function APTChat() {
   const handleAddFriend = async (friendKey: string) => {
     if (!account) return;
     try {
-      const userResource = await aptos.account.getAccountResource({
-        accountAddress: friendKey,
-        resourceType: "0x83af638081fc385750856d3db2bf47034243091869e6bce1ced66644e0ac97f4::aptchat10::User",
-      });
-      const name = userResource.name;
       const transaction: InputTransactionData = {
         data: {
           typeArguments: [],
           function: "0x83af638081fc385750856d3db2bf47034243091869e6bce1ced66644e0ac97f4::aptchat10::add_friend",
-          functionArguments: [friendKey, name],
+          functionArguments: [friendKey, username],
         },
       };
       const response = await signAndSubmitTransaction(transaction);
@@ -199,7 +214,15 @@ function APTChat() {
       message.error("Failed to add friend | Person has Not Registered Contact Admin");
     }
   };
-
+  // const handleNewMessageEvent = async (event: any) => {
+  //   const newMessage = event.data.message;
+  //   const decodedMessage = {
+  //     sender: newMessage.sender,
+  //     timestamp: newMessage.timestamp,
+  //     msg: new TextDecoder().decode(decodeBase64(newMessage.msg)),
+  //   };
+  //   setMessages((prevMessages) => [...prevMessages, decodedMessage]);
+  // };
   const handleSendMessage = async () => {
     if (!account || !selectedFriend) return;
     try {
@@ -312,7 +335,6 @@ function APTChat() {
         resourceType: "0x83af638081fc385750856d3db2bf47034243091869e6bce1ced66644e0ac97f4::aptchat10::User",
       });
       if (resource) {
-        setUsername(resource.name);
         const friendList = resource.friend_list.map((friend: any) => ({
           pubkey: friend.pubkey,
           name: friend.name,
@@ -351,9 +373,6 @@ function APTChat() {
       </div>
       {/* <div className="text-sm font-semibold mt-2 text-white text-trucate text-nowrap text-clip ">{account?.address?.toString()}</div> */}
       <div className="text-xs text-gray-400">Aptos Account</div>
-      <div></div>
-      <div className="text-xs text-white">{username}</div>
-      {/* <div className="text-xs text-white">{account?.address?.toString()}</div> */}
       {/* <div className="flex items-center mt-3">
         <div className="flex justify-center h-4 w-8 bg-gray-500 rounded-full">
           <div className="h-3 w-3 bg-white rounded-full self-end mr-1"></div>
@@ -394,10 +413,11 @@ function APTChat() {
       <div className="flex items-center rounded-2xl justify-between px-6 py-4 bg-gradient-to-r from-gray-800 to-gray-900 shadow-lg">
         <div className="flex items-center">
           <div className="flex items-center justify-center rounded-full bg-gray-700 h-10 w-10 mr-4">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVdBtXAZc22IcpJCe4gx68fsQRuYcOIYyH_g4IKd4BI3l5DdQXRKM3AyMO8msv-LFASy0&usqp=CAU" alt="Logo" />
+            <img src="/aptos.png" alt="Logo" />
           </div>
           <div className="text-2xl font-semibold text-white">
-            {selectedFriend ? selectedFriend.name : "Select a friend to start chatting"}         
+            {selectedFriend ? selectedFriend.name : "Select a friend to start chatting"}         <div className="text-sm font-semibold mt-2 text-white text-trucate text-nowrap text-clip ">{account?.address?.toString()}</div>
+
           </div>
         </div>
         <div className="flex items-center">
@@ -406,18 +426,28 @@ function APTChat() {
             className="px-4 py-2 mr-4 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
             placeholder="Search"
           />
+          <div className="flex items-center">
               <button
-      className="flex items-center justify-center h-10 w-10 ml-4 rounded-full bg-gray-700 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+      className="flex items-center justify-center h-10 w-30 ml-4 rounded-full bg-gray-700 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-800"
       onClick={handleRefreshMessages}
     >
-      <SyncOutlined />
+            <SyncOutlined className="m-2"/> <div className="mr-2">Refresh</div>
     </button>
+
           <button
-            className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-700 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+            className="flex items-center justify-center h-10 w-30 ml-4 rounded-full bg-gray-700 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-800"
             onClick={() => setIsAddFriendModalVisible(true)}
           >
-            <PlusCircleOutlined />
+            <PlusCircleOutlined className="m-2"/> <div className="mr-2">Add Friend</div>
           </button>
+
+          <button
+            className="flex items-center justify-center h-10 w-30 ml-4 rounded-full bg-gray-700 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+            onClick={() => setIsAccessCodeModalVisible(true)}
+          >
+            <PlusCircleOutlined className="m-2"/> <div className="mr-2">Victors Code</div>
+          </button>
+          </div>
         </div>
       </div>
       {/* Chat Messages */}
@@ -456,6 +486,26 @@ function APTChat() {
           </div>
         )}
       </div>
+
+      {isAccessCodeModalVisible && (
+  <div className="fixed inset-0 flex items-center justify-center z-50">
+    <div className="absolute inset-0 bg-black opacity-50"></div>
+    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg p-6 z-10 shadow-lg">
+      <h3 className="text-lg font-semibold text-white mb-4">Access Code</h3>
+      <p className="text-gray-400 mb-4">
+        Your access code is: <span className="font-bold">{import.meta.env.VITE_ACCESS_CODE}</span>
+      </p>
+      <div className="flex justify-end">
+        <button
+          onClick={() => setIsAccessCodeModalVisible(false)}
+          className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-4 py-2 rounded-lg hover:from-gray-700 hover:to-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       {/* Send Message */}
       {selectedFriend && (
         <div className="flex items-center bg-gradient-to-r from-gray-700 to-gray-800 px-4 py-2 shadow-md">
