@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 
-const socket = io('https://aptoschatserver.onrender.com'); // Change this to your deployed server URL
+// const socket = io('https://aptoschatserver.onrender.com'); // Change this to your deployed server URL
+const socket = io('http://localhost:5000'); // Change this to your deployed server URL
+
 
 const VideoCalling: React.FC = () => {
   const [roomId, setRoomId] = useState('');
@@ -90,23 +92,28 @@ const VideoCalling: React.FC = () => {
 
     peerConnection.current.onicecandidate = event => {
       if (event.candidate) {
+        console.log(event.candidate);
         socket.emit('ice-candidate', roomId, event.candidate);
       }
     };
-
+    
     peerConnection.current.ontrack = event => {
+      console.log("hello");
+      
       if (remoteVideoRef.current) {
+        console.log("Remote stream received:", event.streams[0]);
         remoteVideoRef.current.srcObject = event.streams[0];
       }
     };
-
+    
     if (localStream.current) {
       localStream.current?.getTracks().forEach(track => {
         peerConnection.current?.addTrack(track, localStream.current!);
       });
-
+      
       const offer = await peerConnection.current.createOffer();
       await peerConnection.current.setLocalDescription(offer);
+      console.log("hello");
       socket.emit('offer', roomId, offer);
     }
   };
