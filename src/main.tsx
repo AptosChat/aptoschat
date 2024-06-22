@@ -14,9 +14,15 @@ import { OpenBlockWallet } from "@openblockhq/aptos-wallet-adapter";
 import { TokenPocketWallet } from "@tp-lab/aptos-wallet-adapter";
 import { TrustWallet } from "@trustwallet/aptos-wallet-adapter";
 import { WelldoneWallet } from "@welldone-studio/aptos-wallet-adapter";
-
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+// RoomProvider 
 import App from "./App";
+// Room
 import "./index.css";
+import { RoomProvider } from "./context/RoomContext";
+import { Room } from "./components/BoostifySDK/room";
+import { Home } from "./components/BoostifySDK/Home";
+// Home
 
 const wallets = [
   new PetraWallet(),
@@ -37,6 +43,8 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
+    <BrowserRouter>
+    <RoomProvider>
     <AptosWalletAdapterProvider
       plugins={wallets}
       autoConnect={true}
@@ -44,7 +52,12 @@ root.render(
         console.log("Custom error handling", error);
       }}
     >
-      <App />
+        <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/room/:id" element={<Room />} />
+      </Routes>
     </AptosWalletAdapterProvider>
+      </RoomProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );

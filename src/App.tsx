@@ -2,6 +2,8 @@ import "@aptos-labs/wallet-adapter-ant-design/dist/index.css";
 
 import { Layout} from "antd";
 import VideoCalling from "./components/BoostifySDK/videochat";
+import { Room } from "./components/BoostifySDK/room";
+// Room
 
 // const { TextArea } = Input;
 
@@ -33,7 +35,8 @@ function App() {
         </Button>
       </Content> */}
     <div className="min-h-screen  text-white">
-      <VideoCalling />
+      {/* <VideoCalling /> */}
+      <Room/>
     </div>
       {/* <Modal
         title="Sign Transaction"
